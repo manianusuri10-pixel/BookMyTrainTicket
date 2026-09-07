@@ -1,8 +1,11 @@
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:17-jre
+
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
-RUN mvn -q -DskipTests package
+
+COPY target/*.jar app.jar
+
+ENV SERVER_PORT=8080
+
 EXPOSE 8080
-CMD ["java","-jar","target/bookmytrain-1.0.0.jar"]
+
+CMD ["sh", "-c", "java -jar app.jar --server.port=${PORT:-8080}"]
