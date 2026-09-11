@@ -8,7 +8,7 @@ import java.sql.*;
 public class LoginOperations {
     private DatabaseManager dbManager;
     
-    public LoginOperations() throws SQLException {
+    public LoginOperations() {
         this.dbManager = DatabaseManager.getInstance();
     }
     

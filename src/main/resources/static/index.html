@@ -1,25 +1,23 @@
 <!doctype html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BookMyTrainTicket</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BookMyTrainTicket</title>
 <style>
 body{margin:0;font-family:Arial;background:#07111f;color:#f5f7fb}header{padding:20px 7%;display:flex;justify-content:space-between;border-bottom:1px solid #263952}.logo{font-size:25px;font-weight:800}.logo span{color:#27a7ff}button{padding:11px 17px;border:0;border-radius:9px;background:#27a7ff;color:#fff;font-weight:700;cursor:pointer;margin:4px}.secondary{background:#263952}.container{width:min(1050px,92%);margin:35px auto}.card{background:#0d1929;border:1px solid #263952;border-radius:16px;padding:24px;margin:18px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}input,select{width:100%;padding:12px;box-sizing:border-box;background:#081525;color:white;border:1px solid #263952;border-radius:9px}label{display:block;color:#a9b7ca;font-size:13px;margin-bottom:6px}.hidden{display:none}.msg{margin-top:12px;padding:12px;background:#13243a;border-radius:9px;color:#a9b7ca}.train{margin-top:12px;padding:17px;border:1px solid #263952;border-radius:12px}.meta{color:#a9b7ca;line-height:1.7}.seat{display:inline-block;padding:8px;margin:4px;border-radius:7px;border:1px solid #263952}.available{background:#102c28;cursor:pointer}.selected{background:#27a7ff}.unavailable{opacity:.35}table{width:100%;border-collapse:collapse}td,th{padding:9px;border-bottom:1px solid #263952;text-align:left}footer{text-align:center;padding:30px;color:#a9b7ca}
-<<<<<<< HEAD
-</style></head>
-<body><header><div class="logo">BookMy<span>Train</span>Ticket</div><div><button class="secondary" onclick="show('login')">Login</button><button onclick="show('register')">Register</button></div></header>
-=======
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10}.modal-backdrop.hidden{display:none!important}.modal-card{width:min(680px,92vw);background:#0d1929;border:1px solid #27a7ff;border-radius:16px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,0.5)}.modal-header{display:flex;justify-content:space-between;align-items:center}.modal-header h3{margin:0;color:#eef4f8}.modal-close{float:right;background:#263952;color:#fff}.modal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.modal-summary{padding:16px;border-radius:12px;background:#07111f;border:1px solid #263952;margin:16px 0}.summary-line{display:flex;justify-content:space-between;color:#d4dde9;margin:6px 0}.payment-form-footer{display:flex;gap:12px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.payment-form-footer button{margin:0}.modal-message{color:#a9b7ca}.success-modal{padding:24px;text-align:center}.success-modal h3{color:#80f8be}.success-modal p{color:#d4dde9}.success-icon{font-size:42px}
-
-.landing-section{width:min(1180px,92vw);margin:40px auto 24px;background:linear-gradient(135deg,#eef4f8,#d8e4ee);color:#07111f;border-radius:28px;padding:30px 40px;box-shadow:0 20px 50px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.6)}
-.landing-content{display:grid;grid-template-columns:1fr 1.1fr;align-items:center;gap:34px}
-.landing-copy{padding:10px 0}.landing-tag{display:inline-block;padding:8px 12px;border-radius:50px;background:#07111f;color:#eaf6ff;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
-.landing-copy h1,.landing-copy h2,.landing-copy h3,.landing-copy .booking-heading,.feature-card h3,.feature-card h2{color:#07111f}
-.landing-copy h1{font-size:clamp(46px,4vw,60px);line-height:1.1;margin:0 0 14px;font-weight:900}.landing-copy h2{font-size:clamp(28px,2vw,34px);margin:0 0 16px}.landing-copy p{color:#34475a;font-size:16px;line-height:1.7;margin-bottom:24px}
-.landing-buttons{display:flex;gap:14px;flex-wrap:wrap;align-items:center}.landing-buttons a{text-decoration:none}.landing-button{padding:13px 23px;border-radius:12px;background:#07111f;color:#ffffff;font-size:14px;font-weight:800;border:1px solid #07111f;transition:0.2s ease}.landing-button.secondary{background:transparent;color:#07111f;border:1px solid #07111f}.landing-button:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(7,17,31,0.2)}
-.landing-stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}.stat-box{min-width:120px;padding:12px 14px;background:#07111f;color:#eef4f8;border-radius:14px;border:1px solid #07111f}.stat-box strong{display:block;font-size:24px}.stat-box span{font-size:11px;color:#bfd2e5;letter-spacing:1px;text-transform:uppercase}
-.image-area{min-height:380px;display:flex;align-items:center;justify-content:center;position:relative}.image-wrap{width:min(460px,100%);height:380px;position:relative;border-radius:50% 50% 24px 24px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,0.2);border:8px solid #07111f;background:#07111f}.image-wrap:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent,rgba(7,17,31,0.7))}.image-wrap img{width:100%;height:100%;object-fit:cover;display:block}.image-label{position:absolute;z-index:2;left:20px;bottom:20px;background:#07111f;color:#ffffff;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700}
-.feature-strip{width:min(1180px,92vw);margin:20px auto 60px;display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:16px}.feature-card{background:#0d1929;border:1px solid #263952;border-radius:16px;padding:22px;color:#d4dde9}.feature-card h3{color:#eef4f8;font-size:18px;margin-top:0}.feature-card p{color:#a9b7ca;font-size:13px;line-height:1.6}
-@media (max-width:920px){.landing-content,.feature-strip{grid-template-columns:1fr}.image-area{min-height:320px}.image-wrap{height:320px}}
-</style></head>
-<body><header><div class="logo">BookMy<span>Train</span>Ticket</div><div><button class="secondary" onclick="show('login')">Login</button><button onclick="show('register')">Register</button></div></header>
+.landing-section{width:min(1180px,92vw);margin:40px auto 24px;background:linear-gradient(135deg,#eef4f8,#d8e4ee);color:#07111f;border-radius:28px;padding:30px 40px;box-shadow:0 20px 50px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.6)}.landing-content{display:grid;grid-template-columns:1fr 1.1fr;align-items:center;gap:34px}.landing-copy{padding:10px 0}.landing-tag{display:inline-block;padding:8px 12px;border-radius:50px;background:#07111f;color:#eaf6ff;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}.landing-copy h1,.landing-copy h2,.landing-copy h3,.landing-copy .booking-heading,.feature-card h3,.feature-card h2{color:#07111f}.landing-copy h1{font-size:clamp(46px,4vw,60px);line-height:1.1;margin:0 0 14px;font-weight:900}.landing-copy h2{font-size:clamp(28px,2vw,34px);margin:0 0 16px}.landing-copy p{color:#34475a;font-size:16px;line-height:1.7;margin-bottom:24px}.landing-buttons{display:flex;gap:14px;flex-wrap:wrap;align-items:center}.landing-buttons a{text-decoration:none}.landing-button{padding:13px 23px;border-radius:12px;background:#07111f;color:#ffffff;font-size:14px;font-weight:800;border:1px solid #07111f;transition:0.2s ease}.landing-button.secondary{background:transparent;color:#07111f;border:1px solid #07111f}.landing-button:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(7,17,31,0.2)}.landing-stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}.stat-box{min-width:120px;padding:12px 14px;background:#07111f;color:#eef4f8;border-radius:14px;border:1px solid #07111f}.stat-box strong{display:block;font-size:24px}.stat-box span{font-size:11px;color:#bfd2e5;letter-spacing:1px;text-transform:uppercase}.image-area{min-height:380px;display:flex;align-items:center;justify-content:center;position:relative}.image-wrap{width:min(460px,100%);height:380px;position:relative;border-radius:50% 50% 24px 24px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,0.2);border:8px solid #07111f;background:#07111f}.image-wrap:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent,rgba(7,17,31,0.7))}.image-wrap img{width:100%;height:100%;object-fit:cover;display:block}.image-label{position:absolute;z-index:2;left:20px;bottom:20px;background:#07111f;color:#ffffff;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700}.feature-strip{width:min(1180px,92vw);margin:20px auto 60px;display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:16px}.feature-card{background:#0d1929;border:1px solid #263952;border-radius:16px;padding:22px;color:#d4dde9}.feature-card h3{color:#eef4f8;font-size:18px;margin-top:0}.feature-card p{color:#a9b7ca;font-size:13px;line-height:1.6}@media (max-width:920px){.landing-content,.feature-strip{grid-template-columns:1fr}.image-area{min-height:320px}.image-wrap{height:320px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">BookMy<span>Train</span>Ticket</div>
+  <div>
+    <button class="secondary" onclick="show('login')">Login</button>
+    <button onclick="show('register')">Register</button>
+  </div>
+</header>
 
 <section class="landing-section">
   <div class="landing-content">
@@ -28,31 +26,19 @@ body{margin:0;font-family:Arial;background:#07111f;color:#f5f7fb}header{padding:
       <h1>Plan your journey.</h1>
       <h2>Book train tickets faster.</h2>
       <p>Search routes, reserve seats, and manage your journey from one simple booking experience.</p>
-
       <div class="landing-buttons">
         <a class="landing-button" href="#search">Search Trains</a>
         <a class="landing-button secondary" href="#bookings">My Bookings</a>
       </div>
-
       <div class="landing-stats">
-        <div class="stat-box">
-          <strong>120+</strong>
-          <span>Routes</span>
-        </div>
-        <div class="stat-box">
-          <strong>24/7</strong>
-          <span>Support</span>
-        </div>
-        <div class="stat-box">
-          <strong>100%</strong>
-          <span>Easy</span>
-        </div>
+        <div class="stat-box"><strong>120+</strong><span>Routes</span></div>
+        <div class="stat-box"><strong>24/7</strong><span>Support</span></div>
+        <div class="stat-box"><strong>100%</strong><span>Easy</span></div>
       </div>
     </div>
-
     <div class="image-area">
       <div class="image-wrap">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGjt66DNuWF4eMNcLY-E34X-4AsqGQVPR0IYgvZ7qZsutuitfllXlhzjE&s=10" alt="Train">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGjt66DNuWF4eMNcLY-E34X-4AsqGQVPR0IYgvZ7qZsutuitfllXlhzjE&s=10" alt="Train" />
       </div>
       <div class="image-label">Next train: 07:45</div>
     </div>
@@ -74,14 +60,67 @@ body{margin:0;font-family:Arial;background:#07111f;color:#f5f7fb}header{padding:
   </article>
 </section>
 
->>>>>>> manianusuri10-pixel-patch-1
-<main class="container"><div class="card"><h1>Book your train journey</h1><p style="color:#a9b7ca">Search trains, select seats and manage bookings with Aiven MySQL.</p><button onclick="show('search')">Search Trains</button><button class="secondary" onclick="loadBookings()">My Bookings</button></div>
-<section id="login" class="card hidden"><h2>Login</h2><div class="grid"><div><label>Username</label><input id="loginUser"></div><div><label>Password</label><input id="loginPass" type="password"></div></div><br><button onclick="login()">Login</button><div id="loginMsg"></div></section>
-<section id="register" class="card hidden"><h2>Register</h2><div class="grid"><div><label>Username</label><input id="regUser"></div><div><label>Password</label><input id="regPass" type="password"></div><div><label>Email</label><input id="regEmail" type="email"></div><div><label>Role</label><select id="regRole"><option>Regular</option><option>Senior</option><option>DifferentlyAbled</option></select></div></div><br><button onclick="register()">Register</button><div id="regMsg"></div></section>
-<section id="search" class="card"><h2>Search Trains</h2><div class="grid"><div><label>From</label><input id="from" value="New Delhi"></div><div><label>To</label><input id="to" value="Mumbai Central"></div></div><br><button onclick="searchTrains()">Search</button><div id="results"></div></section>
-<<<<<<< HEAD
-<section id="booking" class="card hidden"><h2>Book Ticket</h2><div id="bookingInfo"></div><div class="grid"><div><label>Passenger Name</label><input id="passengerName"></div><div><label>Passenger Age</label><input id="passengerAge" type="number"></div></div><h3>Select Seat</h3><div id="seats"></div><br><button onclick="book()">Confirm Booking</button><div id="bookMsg"></div></section>
-<section id="bookings" class="card hidden"><h2>My Bookings</h2><div id="bookingList"></div></section></main><footer>BookMyTrainTicket © 2026</footer>
+<main class="container">
+  <div class="card">
+    <h1>Book your train journey</h1>
+    <p style="color:#a9b7ca">Search trains, select seats and manage bookings with Aiven MySQL.</p>
+    <button onclick="show('search')">Search Trains</button>
+    <button class="secondary" onclick="loadBookings()">My Bookings</button>
+  </div>
+
+  <section id="login" class="card hidden">
+    <h2>Login</h2>
+    <div class="grid">
+      <div><label>Username</label><input id="loginUser"></div>
+      <div><label>Password</label><input id="loginPass" type="password"></div>
+    </div><br>
+    <button onclick="login()">Login</button>
+    <div id="loginMsg"></div>
+  </section>
+
+  <section id="register" class="card hidden">
+    <h2>Register</h2>
+    <div class="grid">
+      <div><label>Username</label><input id="regUser"></div>
+      <div><label>Password</label><input id="regPass" type="password"></div>
+      <div><label>Email</label><input id="regEmail" type="email"></div>
+      <div><label>Role</label><select id="regRole"><option>Regular</option><option>Senior</option><option>DifferentlyAbled</option></select></div>
+    </div><br>
+    <button onclick="register()">Register</button>
+    <div id="regMsg"></div>
+  </section>
+
+  <section id="search" class="card">
+    <h2>Search Trains</h2>
+    <div class="grid">
+      <div><label>From</label><input id="from" value="New Delhi"></div>
+      <div><label>To</label><input id="to" value="Mumbai Central"></div>
+    </div><br>
+    <button onclick="searchTrains()">Search</button>
+    <div id="results"></div>
+  </section>
+
+  <section id="booking" class="card hidden">
+    <h2>Book Ticket</h2>
+    <div id="bookingInfo"></div>
+    <div class="grid">
+      <div><label>Passenger Name</label><input id="passengerName"></div>
+      <div><label>Passenger Age</label><input id="passengerAge" type="number"></div>
+    </div>
+    <h3>Select Seat</h3>
+    <div id="seats"></div><br>
+    <button onclick="book()">Confirm Ticket</button>
+    <div id="bookMsg"></div>
+  </section>
+
+  <section id="bookings" class="card hidden">
+    <h2>My Bookings</h2>
+    <div id="bookingList"></div>
+  </section>
+</main>
+
+<footer>BookMyTrainTicket © 2026</footer>
+
 <div id="paymentModal" class="modal-backdrop hidden">
  <div class="modal-card">
   <div class="modal-header">
@@ -108,6 +147,7 @@ body{margin:0;font-family:Arial;background:#07111f;color:#f5f7fb}header{padding:
   <div id="paymentMsg" class="msg hidden"></div>
  </div>
 </div>
+
 <div id="successModal" class="modal-backdrop hidden">
  <div class="modal-card success-modal">
   <div class="success-icon">✓</div>
@@ -116,6 +156,7 @@ body{margin:0;font-family:Arial;background:#07111f;color:#f5f7fb}header{padding:
   <button onclick="closeSuccessModal()">Close</button>
  </div>
 </div>
+
 <script>
 let user=JSON.parse(localStorage.getItem('bmtUser')||'null'),selected=null,currentTrain=null,currentRoute=null,routePrice=0,routeSource='',routeDestination='';
 const paymentModal=document.getElementById('paymentModal');
@@ -298,225 +339,6 @@ async function api(u,o={}){
     return demoFallbackResponse(u,o);
   }
 }
-</script></body></html>
-=======
-<section id="booking" class="card hidden"><h2>Book Ticket</h2><div id="bookingInfo"></div><div class="grid"><div><label>Passenger Name</label><input id="passengerName"></div><div><label>Passenger Age</label><input id="passengerAge" type="number"></div></div><h3>Select Seat</h3><div id="seats"></div><br><button onclick="book()">Confirm Ticket</button><div id="bookMsg"></div></section>
-<section id="bookings" class="card hidden"><h2>My Bookings</h2><div id="bookingList"></div></section></main><footer>BookMyTrainTicket © 2026</footer>
-<div id="paymentModal" class="modal-backdrop hidden">
- <div class="modal-card">
-  <div class="modal-header">
-   <h3>Payment Process</h3>
-   <button class="modal-close" onclick="closePaymentModal()">×</button>
-  </div>
-  <div id="paymentSummary" class="modal-summary"></div>
-  <div class="modal-grid">
-   <div><label>Payment Method</label><select id="paymentMethod"><option value="UPI">UPI</option><option value="CREDIT_CARD">Credit Card</option><option value="DEBIT_CARD">Debit Card</option><option value="NET_BANKING">Net Banking</option><option value="WALLET">Wallet</option></select></div>
-   <div id="cardFields">
-    <div><label>Card Holder</label><input id="cardHolderName" placeholder="Card holder name"></div>
-   </div>
-  </div>
-  <div class="modal-grid">
-   <div><label>Card Number</label><input id="cardNumber" placeholder="1234 5678 9012 3456"></div>
-   <div><label>Expiry Date</label><input id="expiryDate" placeholder="MM/YY"></div>
-   <div><label>CVV</label><input id="cvv" placeholder="123" type="password"></div>
-   <div><label>UPI ID</label><input id="upiId" placeholder="name@upi"></div>
-  </div>
-  <div class="payment-form-footer">
-   <button class="secondary" onclick="closePaymentModal()">Cancel</button>
-   <button onclick="processPaymentAndBook()">Pay & Confirm Ticket</button>
-  </div>
-  <div id="paymentMsg" class="msg hidden"></div>
- </div>
-</div>
-<div id="successModal" class="modal-backdrop hidden">
- <div class="modal-card success-modal">
-  <div class="success-icon">✓</div>
-  <h3>Ticket Confirmed Successfully</h3>
-  <p id="successMessage">Your ticket has been booked.</p>
-  <button onclick="closeSuccessModal()">Close</button>
- </div>
-</div>
-<script>
-let user=JSON.parse(localStorage.getItem('bmtUser')||'null'),selected=null,currentTrain=null,currentRoute=null,routePrice=0,routeSource='',routeDestination='';
-const paymentModal=document.getElementById('paymentModal');
-const paymentSummary=document.getElementById('paymentSummary');
-const paymentMsg=document.getElementById('paymentMsg');
-const successModal=document.getElementById('successModal');
-const successMessage=document.getElementById('successMessage');
-const bookingInfo=document.getElementById('bookingInfo');
-const seats=document.getElementById('seats');
-const results=document.getElementById('results');
-const bookingList=document.getElementById('bookingList');
-const passengerName=document.getElementById('passengerName');
-const passengerAge=document.getElementById('passengerAge');
-const from=document.getElementById('from');
-const to=document.getElementById('to');
-const loginUser=document.getElementById('loginUser');
-const loginPass=document.getElementById('loginPass');
-const regUser=document.getElementById('regUser');
-const regPass=document.getElementById('regPass');
-const regEmail=document.getElementById('regEmail');
-const regRole=document.getElementById('regRole');
-
-function show(id){
-  document.querySelectorAll('section.card, div.card').forEach(x=>x.classList.add('hidden'));
-  const target=document.getElementById(id);
-  if(target){target.classList.remove('hidden');}
-}
-
-function msg(id,t){let e=document.getElementById(id);if(e){e.innerHTML='<div class="msg">'+t+'</div>'}}
-
-async function login(){
-  try {
-    let d=await api('/api/auth/login',{method:'POST',body:JSON.stringify({username:loginUser.value,password:loginPass.value})});
-    user=d;
-    localStorage.setItem('bmtUser',JSON.stringify(d));
-    msg('loginMsg','Login successful.');
-    show('search');
-  } catch(e){msg('loginMsg',e.message)}
-}
-
-async function register(){
-  try {
-    let d=await api('/api/auth/register',{method:'POST',body:JSON.stringify({username:regUser.value,password:regPass.value,email:regEmail.value,role:regRole.value})});
-    msg('regMsg',d.message||'Registration successful');
-  } catch(e){msg('regMsg',e.message)}
-}
-
-async function searchTrains(){
-  results.innerHTML='<div class="msg">Searching...</div>';
-  try {
-    let a=await api('/api/trains/search?source='+encodeURIComponent(from.value)+'&destination='+encodeURIComponent(to.value));
-    results.innerHTML=a.length?a.map(x=>'<div class="train"><h3>'+x.train.trainName+' ('+x.train.trainNumber+')</h3><div class="meta">'+x.route.sourceStation+' → '+x.route.destinationStation+'<br>Departure: '+x.route.departureTime+' | Arrival: '+x.route.arrivalTime+'<br>Fare: ₹'+x.route.price+' | Available: '+x.availableSeats+'</div><button onclick="openBooking('+x.train.trainId+','+x.route.routeId+',\''+x.route.sourceStation+'\',\''+x.route.destinationStation+'\','+x.route.price+')">Select Seat</button></div>').join(''):'<div class="msg">No trains found.</div>';
-  }catch(e){results.innerHTML='<div class="msg">'+e.message+'</div>'}
-}
-
-async function openBooking(t,r,source,destination,price){
-  if(!user){show('login');msg('loginMsg','Please login before booking.');return}
-  currentTrain=t;currentRoute=r;selected=null;routePrice=Number(price)||0;routeSource=source||'';routeDestination=destination||'';
-  show('booking');
-  bookingInfo.innerHTML='<div class="meta"><strong>'+source+' → '+destination+'</strong><br>Fare: ₹'+price+'</div>';
-  try {
-    let a=await api('/api/trains/'+t+'/seats');
-    seats.innerHTML=a.map(s=>'<span class="seat '+(s.available?'available':'unavailable')+'" '+(s.available?'onclick="selectSeat(this,'+s.seatId+')"':'')+'>'+s.compartmentName+'-'+s.seatNumber+'<br><small>'+s.berthType+'</small></span>').join('');
-  }catch(e){seats.innerHTML='<div class="msg">'+e.message+'</div>'}
-}
-
-function selectSeat(el,id){
-  document.querySelectorAll('.selected').forEach(x=>x.classList.remove('selected'));
-  el.classList.add('selected');
-  selected=id
-}
-
-function book(){
-  if(!selected){msg('bookMsg','Select a seat.');return}
-  if(!passengerName.value){msg('bookMsg','Enter passenger name.');return}
-  if(!passengerAge.value){msg('bookMsg','Enter passenger age.');return}
-  openPaymentModal();
-}
-
-function openPaymentModal(){
-  const method=document.getElementById('paymentMethod').value||'UPI';
-  const total=routePrice||0;
-  paymentSummary.innerHTML='<div class="summary-line"><span>Route</span><span>'+routeSource+' → '+routeDestination+'</span></div><div class="summary-line"><span>Passenger</span><span>'+escapeHtml(passengerName.value)+'</span></div><div class="summary-line"><span>Seat</span><span id="seatSummary">#'+selected+'</span></div><div class="summary-line"><span>Payment</span><span>₹'+total+'</span></div><div class="summary-line"><span>Method</span><span>'+method+'</span></div>';
-  paymentModal.classList.remove('hidden');
-  paymentMsg.classList.add('hidden');
-  paymentMsg.innerHTML='';
-}
-
-function closePaymentModal(){if(paymentModal){paymentModal.classList.add('hidden')}}
-
-function closeSuccessModal(){
-  const modal=document.getElementById('successModal');
-  if(modal){modal.classList.add('hidden')}
-  closePaymentModal();
-  show('search');
-}
-
-function escapeHtml(str){return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#039;')}
-
-async function processPaymentAndBook(){
-  if(!user){show('login');msg('loginMsg','Please login before booking.');return}
-  if(!selected){closePaymentModal();msg('bookMsg','Select a seat.');return}
-
-  paymentMsg.classList.remove('hidden');
-  paymentMsg.innerHTML='<div class="msg">Processing payment...</div>';
-
-  const method=document.getElementById('paymentMethod').value;
-  const paymentBody={bookingId:0,amount:routePrice,method:method};
-  if(method==='CREDIT_CARD'||method==='DEBIT_CARD'){
-    paymentBody.cardNumber=document.getElementById('cardNumber').value;
-    paymentBody.cardHolderName=document.getElementById('cardHolderName').value;
-    paymentBody.expiryDate=document.getElementById('expiryDate').value;
-    paymentBody.cvv=document.getElementById('cvv').value;
-  }
-  if(method==='UPI'){
-    paymentBody.upiId=document.getElementById('upiId').value;
-  }
-
-  const bookingBody={userId:user.userId,seatId:selected,trainId:currentTrain,routeId:currentRoute,passengerName:passengerName.value,passengerAge:Number(passengerAge.value)};
-
-  try {
-    let d=await api('/api/bookings',{method:'POST',body:JSON.stringify(bookingBody)});
-    if(!d.success){throw Error(d.message||'Booking could not be created.');}
-    paymentBody.bookingId=d.id;
-
-    let paymentResponse=await api('/api/payments/process',{method:'POST',body:JSON.stringify(paymentBody)});
-    if(!paymentResponse.success||paymentResponse.status==='FAILED'){
-      throw Error(paymentResponse.message||'Payment failed.');
-    }
-
-    paymentMsg.innerHTML='<div class="msg">Payment successful. Ticket confirmed.</div>';
-    closePaymentModal();
-    successMessage.innerHTML='Ticket confirmed successfully for '+escapeHtml(passengerName.value)+'<br>Booking ID: '+d.id+'<br>Transaction: '+(paymentResponse.transactionId||'N/A')+'<br>Payment Status: '+paymentResponse.status+'.';
-    successModal.classList.remove('hidden');
-  } catch(e) {
-    const demoBookingId=Math.round(1000+Math.random()*9000);
-    const demoTxn='TXN-'+Date.now().toString().slice(-8);
-    paymentMsg.innerHTML='<div class="msg">Demo mode: payment gateway unreachable. Showing confirmation popup.</div>';
-    closePaymentModal();
-    successMessage.innerHTML='Ticket confirmed successfully for '+escapeHtml(passengerName.value)+'<br>Booking ID: '+demoBookingId+'<br>Transaction: '+demoTxn+'<br>Payment Status: SUCCESS (demo fallback).';
-    successModal.classList.remove('hidden');
-  }
-}
-
-async function loadBookings(){
-  if(!user){show('login');msg('loginMsg','Please login first.');return}
-  show('bookings');
-  try {
-    let a=await api('/api/bookings/user/'+user.userId);
-    bookingList.innerHTML=a.length?'<table><tr><th>Train</th><th>Route</th><th>Passenger</th><th>Status</th></tr>'+a.map(b=>'<tr><td>'+b.trainName+'<br>'+b.trainNumber+'</td><td>'+b.sourceStation+' → '+b.destinationStation+'</td><td>'+b.passengerName+'</td><td>'+b.status+'</td></tr>').join('')+'</table>':'<div class="msg">No bookings yet.</div>';
-  }catch(e){bookingList.innerHTML='<div class="msg">'+e.message+'</div>'}
-}
-
-const demoTrainResults=[{train:{trainId:1,trainName:'Delhi Express',trainNumber:'12401'},route:{routeId:101,sourceStation:'New Delhi',destinationStation:'Mumbai Central',departureTime:'08:15:00',arrivalTime:'14:30:00',price:850},availableSeats:11},{train:{trainId:2,trainName:'Rajdhani Special',trainNumber:'12951'},route:{routeId:102,sourceStation:'New Delhi',destinationStation:'Mumbai Central',departureTime:'18:45:00',arrivalTime:'23:50:00',price:1250},availableSeats:8}];
-const demoSeats=[{seatId:201,compartmentName:'A1',seatNumber:1,berthType:'AC',available:true},{seatId:202,compartmentName:'A1',seatNumber:2,berthType:'AC',available:true},{seatId:203,compartmentName:'A1',seatNumber:3,berthType:'AC',available:false},{seatId:204,compartmentName:'A2',seatNumber:1,berthType:'Sleeper',available:true},{seatId:205,compartmentName:'A2',seatNumber:2,berthType:'Sleeper',available:true}];
-
-function demoFallbackResponse(u,o={}){
-  const url=u||'';
-  if(url.startsWith('/api/auth/login'))return {userId:1,username:loginUser.value||'demo',role:'Regular',message:'Login successful'};
-  if(url.startsWith('/api/auth/register'))return {success:true,message:'Registration successful'};
-  if(url.startsWith('/api/trains/search')){
-    const params=new URLSearchParams(url.split('?')[1]||'');
-    const source=(params.get('source')||'New Delhi').toLowerCase();
-    const destination=(params.get('destination')||'Mumbai Central').toLowerCase();
-    return demoTrainResults.filter(x=>x.route.sourceStation.toLowerCase().includes(source)||x.route.destinationStation.toLowerCase().includes(destination));
-  }
-  if(url.startsWith('/api/trains/')&&url.indexOf('/seats')>-1)return demoSeats;
-  if(url.startsWith('/api/bookings'))return {success:true,message:'Booking confirmed successfully',id:Math.round(1000+Math.random()*9000),status:'Confirmed'};
-  if(url.startsWith('/api/payments/process'))return {success:true,transactionId:'TXN-'+Date.now().toString().slice(-8),message:'Payment processed successfully',status:'SUCCESS',paymentId:1};
-  return {success:true,message:'Demo fallback response'};
-}
-
-async function api(u,o={}){
-  try {
-    let r=await fetch(u,{headers:{'Content-Type':'application/json'},...o});
-    if(!r.ok){throw Error('Request failed');}
-    let d=await r.json().catch(()=>({message:'Invalid server response'}));
-    return d;
-  }catch(e){
-    return demoFallbackResponse(u,o);
-  }
-}
-</script></body></html>
->>>>>>> manianusuri10-pixel-patch-1
+</script>
+</body>
+</html>

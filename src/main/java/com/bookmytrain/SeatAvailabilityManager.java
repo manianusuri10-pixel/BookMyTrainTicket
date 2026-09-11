@@ -8,7 +8,7 @@ import java.util.List;
  * Manages seat availability and operations
  */
 public class SeatAvailabilityManager {
-    public SeatAvailabilityManager() throws SQLException {
+    public SeatAvailabilityManager() {
         DatabaseManager.getInstance();
     }
     

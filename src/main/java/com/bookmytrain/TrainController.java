@@ -9,7 +9,7 @@ import java.util.Map;
 public class TrainController {
     private final TrainManager trainManager;
     private final SeatAvailabilityManager seatManager;
-    public TrainController() throws Exception { trainManager=new TrainManager(); seatManager=new SeatAvailabilityManager(); }
+    public TrainController() { trainManager=new TrainManager(); seatManager=new SeatAvailabilityManager(); }
 
     @GetMapping public ResponseEntity<?> all() {
         try{return ResponseEntity.ok(trainManager.getAllTrains());}

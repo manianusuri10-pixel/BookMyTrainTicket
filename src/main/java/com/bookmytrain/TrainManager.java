@@ -10,7 +10,7 @@ import java.util.List;
 public class TrainManager {
     private DatabaseManager dbManager;
     
-    public TrainManager() throws SQLException {
+    public TrainManager() {
         this.dbManager = DatabaseManager.getInstance();
     }
     

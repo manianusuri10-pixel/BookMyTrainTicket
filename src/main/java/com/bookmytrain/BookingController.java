@@ -8,7 +8,7 @@ import java.util.Map;
 @RequestMapping("/api/bookings")
 public class BookingController {
     private final BookingManager bookingManager;
-    public BookingController() throws Exception { bookingManager=new BookingManager(); }
+    public BookingController() { bookingManager=new BookingManager(); }
 
     @PostMapping public ResponseEntity<?> create(@RequestBody BookingRequest r) {
         try {

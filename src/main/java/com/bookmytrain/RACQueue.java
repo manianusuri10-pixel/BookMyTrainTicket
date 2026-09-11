@@ -10,7 +10,7 @@ import java.util.List;
 public class RACQueue {
     private DatabaseManager dbManager;
     
-    public RACQueue() throws SQLException {
+    public RACQueue() {
         this.dbManager = DatabaseManager.getInstance();
     }
     

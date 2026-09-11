@@ -196,8 +196,12 @@ public class PaymentManager {
     private Connection connection;
     private Random random;
     
-    public PaymentManager() throws SQLException {
-        this.connection = DatabaseManager.getConnection();
+    public PaymentManager() {
+        try {
+            this.connection = DatabaseManager.getConnection();
+        } catch (SQLException ex) {
+            this.connection = null;
+        }
         this.random = new Random();
     }
     

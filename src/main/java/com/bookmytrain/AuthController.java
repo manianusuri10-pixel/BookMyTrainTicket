@@ -10,7 +10,7 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final LoginOperations loginOperations;
-    public AuthController() throws Exception { loginOperations = new LoginOperations(); }
+    public AuthController() { loginOperations = new LoginOperations(); }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String,Object>> login(@RequestBody LoginRequest r) {

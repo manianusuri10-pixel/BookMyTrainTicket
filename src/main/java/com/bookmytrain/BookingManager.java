@@ -14,7 +14,7 @@ public class BookingManager {
     private WaitlistManager waitlistManager;
     private RACQueue racQueue;
     
-    public BookingManager() throws SQLException {
+    public BookingManager() {
         this.dbManager = DatabaseManager.getInstance();
         this.seatManager = new SeatAvailabilityManager();
         this.waitlistManager = new WaitlistManager();

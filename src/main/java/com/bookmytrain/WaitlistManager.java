@@ -10,7 +10,7 @@ import java.util.List;
 public class WaitlistManager {
     private DatabaseManager dbManager;
     
-    public WaitlistManager() throws SQLException {
+    public WaitlistManager() {
         this.dbManager = DatabaseManager.getInstance();
     }
     
