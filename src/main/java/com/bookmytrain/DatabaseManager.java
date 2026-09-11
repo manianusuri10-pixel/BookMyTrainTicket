@@ -28,7 +28,7 @@ public final class DatabaseManager {
             getEnv("AIVEN_DB_USER", "avnadmin");
 
     private static final String DB_PASSWORD =
-            getRequiredEnv("AIVEN_DB_PASSWORD");
+            getEnv("AIVEN_DB_PASSWORD", "");
 
     /*
      * Aiven requires SSL.
@@ -41,7 +41,7 @@ public final class DatabaseManager {
 
     private static DatabaseManager instance;
 
-    private final Connection connection;
+    private Connection connection;
 
 
     // =========================================================
@@ -60,40 +60,27 @@ public final class DatabaseManager {
     }
 
 
-    private static String getRequiredEnv(String name) {
-
-        String value = System.getenv(name);
-
-        if (value == null || value.trim().isEmpty()) {
-
-            throw new IllegalStateException(
-                    "Missing environment variable: " + name
-            );
-        }
-
-        return value;
-    }
-
-
     // =========================================================
     // CONSTRUCTOR
     // =========================================================
 
-    private DatabaseManager() throws SQLException {
+    private DatabaseManager() {
 
+        Connection localConnection = null;
         try {
 
             Class.forName("com.mysql.cj.jdbc.Driver");
 
         } catch (ClassNotFoundException e) {
 
-            throw new SQLException(
-                    "MySQL JDBC driver not found. "
-                    + "Add mysql-connector-j dependency.",
-                    e
+            System.err.println(
+                    "[BookMyTrainTicket] MySQL JDBC driver not found. "
+                    + "Add mysql-connector-j dependency. "
+                    + e.getMessage()
             );
+            this.connection = null;
+            return;
         }
-
 
         System.out.println("----------------------------------------");
         System.out.println("Connecting to Aiven MySQL");
@@ -104,28 +91,40 @@ public final class DatabaseManager {
         System.out.println("Database : " + DB_NAME);
         System.out.println("User     : " + DB_USER);
         System.out.println("SSL      : REQUIRED");
-
+        System.out.println("DB password configured: " + (DB_PASSWORD == null || DB_PASSWORD.isBlank() ? "NO" : "YES"));
 
         Properties props = new Properties();
 
         props.setProperty("user", DB_USER);
         props.setProperty("password", DB_PASSWORD);
 
+        try {
+            localConnection = DriverManager.getConnection(
+                    DB_URL,
+                    props
+            );
 
-        connection = DriverManager.getConnection(
-                DB_URL,
-                props
-        );
+            System.out.println(
+                    "Aiven MySQL connection successful!"
+            );
 
+            System.out.println("----------------------------------------");
 
-        System.out.println(
-                "Aiven MySQL connection successful!"
-        );
+            try {
+                initializeDatabase();
+            } catch (SQLException initEx) {
+                System.err.println("[BookMyTrainTicket] Database schema initialization failed. "
+                        + initEx.getMessage());
+                localConnection = null;
+            }
+        } catch (SQLException ex) {
+            System.err.println("[BookMyTrainTicket] Database connection failed. "
+                    + "Check AIVEN_DB_HOST, AIVEN_DB_PORT, AIVEN_DB_NAME, AIVEN_DB_USER, "
+                    + "and AIVEN_DB_PASSWORD on Render. Trace: " + ex.getMessage());
+            localConnection = null;
+        }
 
-        System.out.println("----------------------------------------");
-
-
-        initializeDatabase();
+        this.connection = localConnection;
     }
 
 
@@ -133,12 +132,20 @@ public final class DatabaseManager {
     // SINGLETON
     // =========================================================
 
-    public static synchronized DatabaseManager getInstance()
-            throws SQLException {
+    public static synchronized DatabaseManager getInstance() {
 
-        if (instance == null
-                || instance.connection.isClosed()) {
+        if (instance == null || instance.connection == null) {
+            instance = new DatabaseManager();
+            return instance;
+        }
 
+        try {
+            if (instance.connection.isClosed()) {
+                instance = new DatabaseManager();
+            }
+        } catch (SQLException ex) {
+            System.err.println("[BookMyTrainTicket] Connection status check failed. "
+                    + ex.getMessage());
             instance = new DatabaseManager();
         }
 
@@ -153,7 +160,17 @@ public final class DatabaseManager {
     public static Connection getConnection()
             throws SQLException {
 
-        return getInstance().connection;
+        DatabaseManager manager = getInstance();
+        if (manager.connection == null) {
+            throw new SQLException(
+                    "Database connection is unavailable. "
+                    + "Set AIVEN_DB_HOST, AIVEN_DB_PORT, AIVEN_DB_NAME, "
+                    + "AIVEN_DB_USER and AIVEN_DB_PASSWORD on Render before "
+                    + "accessing the authentication or booking endpoints."
+            );
+        }
+
+        return manager.connection;
     }
 
 
