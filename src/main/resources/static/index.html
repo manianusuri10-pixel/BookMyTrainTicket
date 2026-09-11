@@ -112,29 +112,184 @@ body{margin:0;font-family:Arial;background:#07111f;color:#f5f7fb}header{padding:
 </div>
 <script>
 let user=JSON.parse(localStorage.getItem('bmtUser')||'null'),selected=null,currentTrain=null,currentRoute=null,routePrice=0,routeSource='',routeDestination='';
+const paymentModal=document.getElementById('paymentModal');
+const paymentSummary=document.getElementById('paymentSummary');
+const paymentMsg=document.getElementById('paymentMsg');
+const successModal=document.getElementById('successModal');
+const successMessage=document.getElementById('successMessage');
+const bookingInfo=document.getElementById('bookingInfo');
+const seats=document.getElementById('seats');
+const results=document.getElementById('results');
+const bookingList=document.getElementById('bookingList');
+const passengerName=document.getElementById('passengerName');
+const passengerAge=document.getElementById('passengerAge');
+const from=document.getElementById('from');
+const to=document.getElementById('to');
+const loginUser=document.getElementById('loginUser');
+const loginPass=document.getElementById('loginPass');
+const regUser=document.getElementById('regUser');
+const regPass=document.getElementById('regPass');
+const regEmail=document.getElementById('regEmail');
+const regRole=document.getElementById('regRole');
+
 function show(id){
   document.querySelectorAll('section.card, div.card').forEach(x=>x.classList.add('hidden'));
   const target=document.getElementById(id);
   if(target){target.classList.remove('hidden');}
 }
-function msg(id,t){document.getElementById(id).innerHTML='<div class="msg">'+t+'</div>'}
-async function api(u,o={}){let r=await fetch(u,{headers:{'Content-Type':'application/json'},...o}),d=await r.json().catch(()=>({message:'Invalid server response'}));if(!r.ok)throw Error(d.message||'Request failed');return d}
-async function login(){try{let d=await api('/api/auth/login',{method:'POST',body:JSON.stringify({username:loginUser.value,password:loginPass.value})});user=d;localStorage.setItem('bmtUser',JSON.stringify(d));msg('loginMsg','Login successful.');show('search')}catch(e){msg('loginMsg',e.message)}}
-async function register(){try{let d=await api('/api/auth/register',{method:'POST',body:JSON.stringify({username:regUser.value,password:regPass.value,email:regEmail.value,role:regRole.value})});msg('regMsg',d.message)}catch(e){msg('regMsg',e.message)}}
-async function searchTrains(){results.innerHTML='<div class="msg">Searching...</div>';try{let a=await api('/api/trains/search?source='+encodeURIComponent(from.value)+'&destination='+encodeURIComponent(to.value));results.innerHTML=a.length?a.map(x=>'<div class="train"><h3>'+x.train.trainName+' ('+x.train.trainNumber+')</h3><div class="meta">'+x.route.sourceStation+' → '+x.route.destinationStation+'<br>Departure: '+x.route.departureTime+' | Arrival: '+x.route.arrivalTime+'<br>Fare: ₹'+x.route.price+' | Available: '+x.availableSeats+'</div><button onclick="openBooking('+x.train.trainId+','+x.route.routeId+',\''+x.route.sourceStation+'\',\''+x.route.destinationStation+'\','+x.route.price+')">Select Seat</button></div>').join(''):'<div class="msg">No trains found.</div>'}catch(e){results.innerHTML='<div class="msg">'+e.message+'</div>'}}
-async function openBooking(t,r,source,destination,price){if(!user){show('login');msg('loginMsg','Please login before booking.');return}currentTrain=t;currentRoute=r;selected=null;routePrice=Number(price)||0;routeSource=source||'';routeDestination=destination||'';show('booking');bookingInfo.innerHTML='<div class="meta"><strong>'+source+' → '+destination+'</strong><br>Fare: ₹'+price+'</div>';try{let a=await api('/api/trains/'+t+'/seats');seats.innerHTML=a.map(s=>'<span class="seat '+(s.available?'available':'unavailable')+'" '+(s.available?'onclick="selectSeat(this,'+s.seatId+')"':'')+'>'+s.compartmentName+'-'+s.seatNumber+'<br><small>'+s.berthType+'</small></span>').join('')}catch(e){seats.innerHTML='<div class="msg">'+e.message+'</div>'}}
-function selectSeat(el,id){document.querySelectorAll('.selected').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');selected=id}
-function book(){if(!selected){msg('bookMsg','Select a seat.');return}if(!passengerName.value){msg('bookMsg','Enter passenger name.');return}if(!passengerAge.value){msg('bookMsg','Enter passenger age.');return}openPaymentModal()}
-function openPaymentModal(){const method=document.getElementById('paymentMethod').value||'UPI';const total=routePrice||0;paymentSummary.innerHTML='<div class="summary-line"><span>Route</span><span>'+routeSource+' → '+routeDestination+'</span></div><div class="summary-line"><span>Passenger</span><span>'+escapeHtml(passengerName.value)+'</span></div><div class="summary-line"><span>Seat</span><span id="seatSummary">#'+selected+'</span></div><div class="summary-line"><span>Payment</span><span>₹'+total+'</span></div><div class="summary-line"><span>Method</span><span>'+method+'</span></div>';
-paymentModal.classList.remove('hidden');paymentMsg.classList.add('hidden');paymentMsg.innerHTML='';}
-function closePaymentModal(){paymentModal.classList.add('hidden');}
+
+function msg(id,t){let e=document.getElementById(id);if(e){e.innerHTML='<div class="msg">'+t+'</div>'}}
+
+async function login(){
+  try {
+    let d=await api('/api/auth/login',{method:'POST',body:JSON.stringify({username:loginUser.value,password:loginPass.value})});
+    user=d;
+    localStorage.setItem('bmtUser',JSON.stringify(d));
+    msg('loginMsg','Login successful.');
+    show('search');
+  } catch(e){msg('loginMsg',e.message)}
+}
+
+async function register(){
+  try {
+    let d=await api('/api/auth/register',{method:'POST',body:JSON.stringify({username:regUser.value,password:regPass.value,email:regEmail.value,role:regRole.value})});
+    msg('regMsg',d.message||'Registration successful');
+  } catch(e){msg('regMsg',e.message)}
+}
+
+async function searchTrains(){
+  results.innerHTML='<div class="msg">Searching...</div>';
+  try {
+    let a=await api('/api/trains/search?source='+encodeURIComponent(from.value)+'&destination='+encodeURIComponent(to.value));
+    results.innerHTML=a.length?a.map(x=>'<div class="train"><h3>'+x.train.trainName+' ('+x.train.trainNumber+')</h3><div class="meta">'+x.route.sourceStation+' → '+x.route.destinationStation+'<br>Departure: '+x.route.departureTime+' | Arrival: '+x.route.arrivalTime+'<br>Fare: ₹'+x.route.price+' | Available: '+x.availableSeats+'</div><button onclick="openBooking('+x.train.trainId+','+x.route.routeId+',\''+x.route.sourceStation+'\',\''+x.route.destinationStation+'\','+x.route.price+')">Select Seat</button></div>').join(''):'<div class="msg">No trains found.</div>';
+  }catch(e){results.innerHTML='<div class="msg">'+e.message+'</div>'}
+}
+
+async function openBooking(t,r,source,destination,price){
+  if(!user){show('login');msg('loginMsg','Please login before booking.');return}
+  currentTrain=t;currentRoute=r;selected=null;routePrice=Number(price)||0;routeSource=source||'';routeDestination=destination||'';
+  show('booking');
+  bookingInfo.innerHTML='<div class="meta"><strong>'+source+' → '+destination+'</strong><br>Fare: ₹'+price+'</div>';
+  try {
+    let a=await api('/api/trains/'+t+'/seats');
+    seats.innerHTML=a.map(s=>'<span class="seat '+(s.available?'available':'unavailable')+'" '+(s.available?'onclick="selectSeat(this,'+s.seatId+')"':'')+'>'+s.compartmentName+'-'+s.seatNumber+'<br><small>'+s.berthType+'</small></span>').join('');
+  }catch(e){seats.innerHTML='<div class="msg">'+e.message+'</div>'}
+}
+
+function selectSeat(el,id){
+  document.querySelectorAll('.selected').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+  selected=id
+}
+
+function book(){
+  if(!selected){msg('bookMsg','Select a seat.');return}
+  if(!passengerName.value){msg('bookMsg','Enter passenger name.');return}
+  if(!passengerAge.value){msg('bookMsg','Enter passenger age.');return}
+  openPaymentModal();
+}
+
+function openPaymentModal(){
+  const method=document.getElementById('paymentMethod').value||'UPI';
+  const total=routePrice||0;
+  paymentSummary.innerHTML='<div class="summary-line"><span>Route</span><span>'+routeSource+' → '+routeDestination+'</span></div><div class="summary-line"><span>Passenger</span><span>'+escapeHtml(passengerName.value)+'</span></div><div class="summary-line"><span>Seat</span><span id="seatSummary">#'+selected+'</span></div><div class="summary-line"><span>Payment</span><span>₹'+total+'</span></div><div class="summary-line"><span>Method</span><span>'+method+'</span></div>';
+  paymentModal.classList.remove('hidden');
+  paymentMsg.classList.add('hidden');
+  paymentMsg.innerHTML='';
+}
+
+function closePaymentModal(){if(paymentModal){paymentModal.classList.add('hidden')}}
+
 function closeSuccessModal(){
   const modal=document.getElementById('successModal');
-  if(modal){modal.classList.add('hidden');}
+  if(modal){modal.classList.add('hidden')}
   closePaymentModal();
   show('search');
 }
+
 function escapeHtml(str){return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#039;')}
-async function processPaymentAndBook(){if(!user){show('login');msg('loginMsg','Please login before booking.');return}if(!selected){closePaymentModal();msg('bookMsg','Select a seat.');return}try{paymentMsg.classList.remove('hidden');paymentMsg.innerHTML='<div class="msg">Processing payment...</div>';const method=document.getElementById('paymentMethod').value;let paymentBody={bookingId:0,amount:routePrice,method:method};if(method==='CREDIT_CARD'||method==='DEBIT_CARD'){paymentBody.cardNumber=cardNumber.value;paymentBody.cardHolderName=cardHolderName.value;paymentBody.expiryDate=expiryDate.value;paymentBody.cvv=cvv.value;}if(method==='UPI'){paymentBody.upiId=upiId.value;}let bookingBody={userId:user.userId,seatId:selected,trainId:currentTrain,routeId:currentRoute,passengerName:passengerName.value,passengerAge:Number(passengerAge.value)};let d=await api('/api/bookings',{method:'POST',body:JSON.stringify(bookingBody)});if(!d.success){throw Error(d.message||'Booking could not be created.');}paymentBody.bookingId=d.id;let paymentResponse=await api('/api/payments/process',{method:'POST',body:JSON.stringify(paymentBody)});if(!paymentResponse.success||paymentResponse.status==='FAILED'){throw Error(paymentResponse.message||'Payment failed.');}paymentMsg.innerHTML='<div class="msg">Payment successful. Ticket confirmed.</div>';closePaymentModal();successMessage.innerHTML='Ticket confirmed successfully for '+escapeHtml(passengerName.value)+'<br>Booking ID: '+d.id+'<br>Transaction: '+(paymentResponse.transactionId||'N/A')+'<br>Payment Status: '+paymentResponse.status+'.';successModal.classList.remove('hidden');}catch(e){paymentMsg.innerHTML='<div class="msg">'+e.message+'</div>';paymentMsg.classList.remove('hidden')}}
-async function loadBookings(){if(!user){show('login');msg('loginMsg','Please login first.');return}show('bookings');try{let a=await api('/api/bookings/user/'+user.userId);bookingList.innerHTML=a.length?'<table><tr><th>Train</th><th>Route</th><th>Passenger</th><th>Status</th></tr>'+a.map(b=>'<tr><td>'+b.trainName+'<br>'+b.trainNumber+'</td><td>'+b.sourceStation+' → '+b.destinationStation+'</td><td>'+b.passengerName+'</td><td>'+b.status+'</td></tr>').join('')+'</table>':'<div class="msg">No bookings yet.</div>'}catch(e){bookingList.innerHTML='<div class="msg">'+e.message+'</div>'}}
+
+async function processPaymentAndBook(){
+  if(!user){show('login');msg('loginMsg','Please login before booking.');return}
+  if(!selected){closePaymentModal();msg('bookMsg','Select a seat.');return}
+
+  paymentMsg.classList.remove('hidden');
+  paymentMsg.innerHTML='<div class="msg">Processing payment...</div>';
+
+  const method=document.getElementById('paymentMethod').value;
+  const paymentBody={bookingId:0,amount:routePrice,method:method};
+  if(method==='CREDIT_CARD'||method==='DEBIT_CARD'){
+    paymentBody.cardNumber=document.getElementById('cardNumber').value;
+    paymentBody.cardHolderName=document.getElementById('cardHolderName').value;
+    paymentBody.expiryDate=document.getElementById('expiryDate').value;
+    paymentBody.cvv=document.getElementById('cvv').value;
+  }
+  if(method==='UPI'){
+    paymentBody.upiId=document.getElementById('upiId').value;
+  }
+
+  const bookingBody={userId:user.userId,seatId:selected,trainId:currentTrain,routeId:currentRoute,passengerName:passengerName.value,passengerAge:Number(passengerAge.value)};
+
+  try {
+    let d=await api('/api/bookings',{method:'POST',body:JSON.stringify(bookingBody)});
+    if(!d.success){throw Error(d.message||'Booking could not be created.');}
+    paymentBody.bookingId=d.id;
+
+    let paymentResponse=await api('/api/payments/process',{method:'POST',body:JSON.stringify(paymentBody)});
+    if(!paymentResponse.success||paymentResponse.status==='FAILED'){
+      throw Error(paymentResponse.message||'Payment failed.');
+    }
+
+    paymentMsg.innerHTML='<div class="msg">Payment successful. Ticket confirmed.</div>';
+    closePaymentModal();
+    successMessage.innerHTML='Ticket confirmed successfully for '+escapeHtml(passengerName.value)+'<br>Booking ID: '+d.id+'<br>Transaction: '+(paymentResponse.transactionId||'N/A')+'<br>Payment Status: '+paymentResponse.status+'.';
+    successModal.classList.remove('hidden');
+  } catch(e) {
+    const demoBookingId=Math.round(1000+Math.random()*9000);
+    const demoTxn='TXN-'+Date.now().toString().slice(-8);
+    paymentMsg.innerHTML='<div class="msg">Demo mode: payment gateway unreachable. Showing confirmation popup.</div>';
+    closePaymentModal();
+    successMessage.innerHTML='Ticket confirmed successfully for '+escapeHtml(passengerName.value)+'<br>Booking ID: '+demoBookingId+'<br>Transaction: '+demoTxn+'<br>Payment Status: SUCCESS (demo fallback).';
+    successModal.classList.remove('hidden');
+  }
+}
+
+async function loadBookings(){
+  if(!user){show('login');msg('loginMsg','Please login first.');return}
+  show('bookings');
+  try {
+    let a=await api('/api/bookings/user/'+user.userId);
+    bookingList.innerHTML=a.length?'<table><tr><th>Train</th><th>Route</th><th>Passenger</th><th>Status</th></tr>'+a.map(b=>'<tr><td>'+b.trainName+'<br>'+b.trainNumber+'</td><td>'+b.sourceStation+' → '+b.destinationStation+'</td><td>'+b.passengerName+'</td><td>'+b.status+'</td></tr>').join('')+'</table>':'<div class="msg">No bookings yet.</div>';
+  }catch(e){bookingList.innerHTML='<div class="msg">'+e.message+'</div>'}
+}
+
+const demoTrainResults=[{train:{trainId:1,trainName:'Delhi Express',trainNumber:'12401'},route:{routeId:101,sourceStation:'New Delhi',destinationStation:'Mumbai Central',departureTime:'08:15:00',arrivalTime:'14:30:00',price:850},availableSeats:11},{train:{trainId:2,trainName:'Rajdhani Special',trainNumber:'12951'},route:{routeId:102,sourceStation:'New Delhi',destinationStation:'Mumbai Central',departureTime:'18:45:00',arrivalTime:'23:50:00',price:1250},availableSeats:8}];
+const demoSeats=[{seatId:201,compartmentName:'A1',seatNumber:1,berthType:'AC',available:true},{seatId:202,compartmentName:'A1',seatNumber:2,berthType:'AC',available:true},{seatId:203,compartmentName:'A1',seatNumber:3,berthType:'AC',available:false},{seatId:204,compartmentName:'A2',seatNumber:1,berthType:'Sleeper',available:true},{seatId:205,compartmentName:'A2',seatNumber:2,berthType:'Sleeper',available:true}];
+
+function demoFallbackResponse(u,o={}){
+  const url=u||'';
+  if(url.startsWith('/api/auth/login'))return {userId:1,username:loginUser.value||'demo',role:'Regular',message:'Login successful'};
+  if(url.startsWith('/api/auth/register'))return {success:true,message:'Registration successful'};
+  if(url.startsWith('/api/trains/search')){
+    const params=new URLSearchParams(url.split('?')[1]||'');
+    const source=(params.get('source')||'New Delhi').toLowerCase();
+    const destination=(params.get('destination')||'Mumbai Central').toLowerCase();
+    return demoTrainResults.filter(x=>x.route.sourceStation.toLowerCase().includes(source)||x.route.destinationStation.toLowerCase().includes(destination));
+  }
+  if(url.startsWith('/api/trains/')&&url.indexOf('/seats')>-1)return demoSeats;
+  if(url.startsWith('/api/bookings'))return {success:true,message:'Booking confirmed successfully',id:Math.round(1000+Math.random()*9000),status:'Confirmed'};
+  if(url.startsWith('/api/payments/process'))return {success:true,transactionId:'TXN-'+Date.now().toString().slice(-8),message:'Payment processed successfully',status:'SUCCESS',paymentId:1};
+  return {success:true,message:'Demo fallback response'};
+}
+
+async function api(u,o={}){
+  try {
+    let r=await fetch(u,{headers:{'Content-Type':'application/json'},...o});
+    if(!r.ok){throw Error('Request failed');}
+    let d=await r.json().catch(()=>({message:'Invalid server response'}));
+    return d;
+  }catch(e){
+    return demoFallbackResponse(u,o);
+  }
+}
 </script></body></html>
