@@ -115,6 +115,7 @@ body{margin:0;font-family:Arial;background:#07111f;color:#f5f7fb}header{padding:
 
   <section id="bookings" class="card hidden">
     <h2>My Bookings</h2>
+    <div id="bookingCount" class="booking-count"></div>
     <div id="bookingList"></div>
   </section>
 </main>
@@ -168,6 +169,7 @@ const bookingInfo=document.getElementById('bookingInfo');
 const seats=document.getElementById('seats');
 const results=document.getElementById('results');
 const bookingList=document.getElementById('bookingList');
+const bookingCount=document.getElementById('bookingCount');
 const passengerName=document.getElementById('passengerName');
 const passengerAge=document.getElementById('passengerAge');
 const from=document.getElementById('from');
@@ -291,6 +293,7 @@ async function processPaymentAndBook(){
     closePaymentModal();
     successMessage.innerHTML='Ticket confirmed successfully for '+escapeHtml(passengerName.value)+'<br>Booking ID: '+d.id+'<br>Transaction: '+(paymentResponse.transactionId||'N/A')+'<br>Payment Status: '+paymentResponse.status+'.';
     successModal.classList.remove('hidden');
+    await loadBookings();
   } catch(e) {
     const demoBookingId=Math.round(1000+Math.random()*9000);
     const demoTxn='TXN-'+Date.now().toString().slice(-8);
@@ -298,6 +301,7 @@ async function processPaymentAndBook(){
     closePaymentModal();
     successMessage.innerHTML='Ticket confirmed successfully for '+escapeHtml(passengerName.value)+'<br>Booking ID: '+demoBookingId+'<br>Transaction: '+demoTxn+'<br>Payment Status: SUCCESS (demo fallback).';
     successModal.classList.remove('hidden');
+    await loadBookings();
   }
 }
 
@@ -305,9 +309,11 @@ async function loadBookings(){
   if(!user){show('login');msg('loginMsg','Please login first.');return}
   show('bookings');
   try {
-    let a=await api('/api/bookings/user/'+user.userId);
-    bookingList.innerHTML=a.length?'<table><tr><th>Train</th><th>Route</th><th>Passenger</th><th>Status</th></tr>'+a.map(b=>'<tr><td>'+b.trainName+'<br>'+b.trainNumber+'</td><td>'+b.sourceStation+' → '+b.destinationStation+'</td><td>'+b.passengerName+'</td><td>'+b.status+'</td></tr>').join('')+'</table>':'<div class="msg">No bookings yet.</div>';
-  }catch(e){bookingList.innerHTML='<div class="msg">'+e.message+'</div>'}
+    let response=await api('/api/bookings/user/'+user.userId);
+    let bookings=Array.isArray(response)?response:Array.isArray(response.bookings)?response.bookings:[];
+    bookingCount.innerHTML='<div class="msg">You have '+bookings.length+' ticket'+(bookings.length===1?'':'s')+' booked.</div>';
+    bookingList.innerHTML=bookings.length?'<table><tr><th>Train</th><th>Route</th><th>Passenger</th><th>Status</th></tr>'+bookings.map(b=>'<tr><td>'+(b.trainName||'Train')+'<br>'+(b.trainNumber||'N/A')+'</td><td>'+(b.sourceStation||'Source')+' → '+(b.destinationStation||'Destination')+'</td><td>'+(b.passengerName||'Passenger')+'</td><td>'+(b.status||b.paymentStatus||'Confirmed')+'</td></tr>').join('')+'</table>':'<div class="msg">No bookings yet.</div>';
+  }catch(e){bookingList.innerHTML='<div class="msg">'+e.message+'</div>';bookingCount.innerHTML='<div class="msg">You have 0 tickets booked.</div>'}
 }
 
 const demoTrainResults=[{train:{trainId:1,trainName:'Delhi Express',trainNumber:'12401'},route:{routeId:101,sourceStation:'New Delhi',destinationStation:'Mumbai Central',departureTime:'08:15:00',arrivalTime:'14:30:00',price:850},availableSeats:11},{train:{trainId:2,trainName:'Rajdhani Special',trainNumber:'12951'},route:{routeId:102,sourceStation:'New Delhi',destinationStation:'Mumbai Central',departureTime:'18:45:00',arrivalTime:'23:50:00',price:1250},availableSeats:8}];
@@ -324,6 +330,7 @@ function demoFallbackResponse(u,o={}){
     return demoTrainResults.filter(x=>x.route.sourceStation.toLowerCase().includes(source)||x.route.destinationStation.toLowerCase().includes(destination));
   }
   if(url.startsWith('/api/trains/')&&url.indexOf('/seats')>-1)return demoSeats;
+  if(url.startsWith('/api/bookings/user/'))return [{bookingId:1001,userId:1,trainName:'Delhi Express',trainNumber:'12401',sourceStation:'New Delhi',destinationStation:'Mumbai Central',passengerName:loginUser.value||'Demo Passenger',status:'Confirmed'}];
   if(url.startsWith('/api/bookings'))return {success:true,message:'Booking confirmed successfully',id:Math.round(1000+Math.random()*9000),status:'Confirmed'};
   if(url.startsWith('/api/payments/process'))return {success:true,transactionId:'TXN-'+Date.now().toString().slice(-8),message:'Payment processed successfully',status:'SUCCESS',paymentId:1};
   return {success:true,message:'Demo fallback response'};
