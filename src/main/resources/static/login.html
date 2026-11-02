@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookMyTrainTicket - User Login</title>
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .auth-container {
+      max-width: 440px;
+      margin: 50px auto;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo-container">
+    <div class="logo">BookMy<span>Train</span>Ticket</div>
+    <span id="liveStatus" class="live-badge">● Online</span>
+  </a>
+  <nav id="navbarLinks" class="nav-links"></nav>
+</header>
+
+<main class="container">
+  <div class="auth-container">
+    <div class="card">
+      <h1 class="card-title">User Login</h1>
+      <p class="card-subtitle">Sign in to your account to reserve train tickets and view your booking history.</p>
+
+      <form id="loginForm" onsubmit="event.preventDefault(); handleLogin();">
+        <div class="form-group" style="margin-bottom:16px;">
+          <label for="username">Username</label>
+          <input id="username" required placeholder="Enter username" autofocus>
+        </div>
+
+        <div class="form-group" style="margin-bottom:20px;">
+          <label for="password">Password</label>
+          <input id="password" type="password" required placeholder="Enter password">
+        </div>
+
+        <button type="submit" style="width:100%;font-size:16px;padding:12px;">Sign In</button>
+      </form>
+
+      <div id="loginMsg"></div>
+
+      <div style="margin-top:24px;text-align:center;font-size:14px;color:#a9b7ca;border-top:1px solid #263952;padding-top:16px;">
+        Don't have an account? <a href="register.html" style="color:#27a7ff;font-weight:600;text-decoration:none;">Create account</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  BookMyTrainTicket © 2026 • Train Reservation System
+</footer>
+
+<script src="common.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    initNavbar('login');
+    // If already logged in, notify user
+    const user = getUser();
+    if (user && user.username) {
+      document.getElementById('loginMsg').innerHTML = `
+        <div class="msg">You are currently logged in as <strong>${escapeHtml(user.username)}</strong>.
+        <a href="search.html" style="color:#27a7ff;margin-left:8px;">Search Trains</a></div>
+      `;
+    }
+  });
+
+  async function handleLogin() {
+    const userVal = document.getElementById('username').value.trim();
+    const passVal = document.getElementById('password').value;
+    const msg = document.getElementById('loginMsg');
+
+    if (!userVal || !passVal) {
+      msg.innerHTML = '<div class="msg error">Please enter both username and password.</div>';
+      return;
+    }
+
+    msg.innerHTML = '<div class="msg">Signing in...</div>';
+
+    try {
+      const res = await api('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ username: userVal, password: passVal })
+      });
+
+      if (!res.success && res.message && !res.userId) {
+        throw new Error(res.message || 'Login failed.');
+      }
+
+      setUser({
+        userId: res.userId || 1,
+        username: res.username || userVal,
+        email: res.email || '',
+        role: res.role || 'Regular'
+      });
+
+      msg.innerHTML = '<div class="msg success">Login successful! Redirecting to train search...</div>';
+      setTimeout(() => {
+        window.location.href = 'search.html';
+      }, 900);
+    } catch (err) {
+      msg.innerHTML = `<div class="msg error">${escapeHtml(err.message)}</div>`;
+    }
+  }
+</script>
+</body>
+</html>

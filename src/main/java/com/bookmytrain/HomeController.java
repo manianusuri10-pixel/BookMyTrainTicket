@@ -8,9 +8,29 @@ import java.util.Map;
 @Controller
 public class HomeController {
 
-    @GetMapping("/")
+    @GetMapping({"/", "/index", "/home"})
     public String index() {
         return "forward:/index.html";
+    }
+
+    @GetMapping("/search")
+    public String search() {
+        return "forward:/search.html";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "forward:/login.html";
+    }
+
+    @GetMapping("/register")
+    public String register() {
+        return "forward:/register.html";
+    }
+
+    @GetMapping("/bookings")
+    public String bookings() {
+        return "forward:/bookings.html";
     }
 
     @GetMapping("/api/health")

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookMyTrainTicket - My Bookings</title>
+  <link rel="stylesheet" href="common.css">
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo-container">
+    <div class="logo">BookMy<span>Train</span>Ticket</div>
+    <span id="liveStatus" class="live-badge">● Online</span>
+  </a>
+  <nav id="navbarLinks" class="nav-links"></nav>
+</header>
+
+<main class="container">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1 class="card-title" style="margin:0;">My Bookings</h1>
+        <p class="card-subtitle" style="margin-bottom:0;">View and manage your reserved train tickets.</p>
+      </div>
+      <a href="search.html" class="btn">+ Book New Ticket</a>
+    </div>
+
+    <div id="authNotice" style="display:none;margin-top:20px;">
+      <div class="msg">
+        <strong>You are not signed in.</strong> Please log in to view your reserved tickets.
+        <div style="margin-top:12px;">
+          <a href="login.html" class="btn" style="padding:8px 16px;font-size:13px;">Log In Now</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="bookingListContainer" style="margin-top:24px;"></div>
+  </div>
+</main>
+
+<footer>
+  BookMyTrainTicket © 2026 • Train Reservation System
+</footer>
+
+<script src="common.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    initNavbar('bookings');
+    loadUserBookings();
+  });
+
+  async function loadUserBookings() {
+    const user = getUser();
+    const authNotice = document.getElementById('authNotice');
+    const container = document.getElementById('bookingListContainer');
+
+    if (!user) {
+      authNotice.style.display = 'block';
+      container.innerHTML = '';
+      return;
+    }
+
+    authNotice.style.display = 'none';
+    container.innerHTML = '<p style="color:#a9b7ca;">Loading your bookings...</p>';
+
+    try {
+      const bookings = await api(`/api/bookings/user/${user.userId || 1}`);
+
+      if (!bookings || bookings.length === 0) {
+        container.innerHTML = `
+          <div class="msg" style="text-align:center;padding:32px;">
+            <p style="font-size:16px;margin:0 0 16px;">You don't have any train reservations yet.</p>
+            <a href="search.html" class="btn">Find Trains & Book Now</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Train Details</th>
+                <th>Route</th>
+                <th>Passenger</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${bookings.map(b => {
+                const isConfirmed = (b.status || 'Confirmed') === 'Confirmed';
+                const statusColor = isConfirmed ? '#80f8be' : '#f75555';
+                const id = b.bookingId || b.id || 1001;
+                const trainName = b.trainName || 'Express Train';
+                const trainNo = b.trainNumber ? `#${b.trainNumber}` : '';
+                const src = b.sourceStation || 'Source';
+                const dest = b.destinationStation || 'Destination';
+                const passenger = `${b.passengerName || 'Passenger'} ${b.passengerAge ? `(${b.passengerAge} yrs)` : ''}`;
+
+                return `
+                  <tr>
+                    <td><strong>#${id}</strong></td>
+                    <td>
+                      <strong>${escapeHtml(trainName)}</strong><br>
+                      <span style="color:#27a7ff;font-size:12px;">${escapeHtml(trainNo)}</span>
+                    </td>
+                    <td>${escapeHtml(src)} ➔ ${escapeHtml(dest)}</td>
+                    <td>${escapeHtml(passenger)}</td>
+                    <td>
+                      <span style="color:${statusColor};font-weight:700;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,0.05);">
+                        ● ${escapeHtml(b.status || 'Confirmed')}
+                      </span>
+                    </td>
+                    <td>
+                      ${isConfirmed ? `
+                        <button class="btn-danger" style="padding:6px 12px;font-size:12px;" onclick="cancelBooking(${id})">Cancel</button>
+                      ` : '<span style="color:#5d6f85;font-size:12px;">Cancelled</span>'}
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } catch (err) {
+      container.innerHTML = `<div class="msg error">Failed to load bookings: ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  async function cancelBooking(bookingId) {
+    if (!confirm(`Are you sure you want to cancel booking #${bookingId}?`)) return;
+
+    try {
+      const res = await api(`/api/bookings/${bookingId}/cancel`, { method: 'POST' });
+      alert(res.message || 'Ticket cancelled successfully.');
+
+      // Update in local demo storage as well
+      let saved = JSON.parse(localStorage.getItem('bmtBookings') || '[]');
+      saved = saved.map(b => (b.bookingId === bookingId || b.id === bookingId) ? { ...b, status: 'Cancelled' } : b);
+      localStorage.setItem('bmtBookings', JSON.stringify(saved));
+
+      loadUserBookings();
+    } catch (err) {
+      alert('Error cancelling booking: ' + err.message);
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookMyTrainTicket - Search & Book Trains</title>
+  <link rel="stylesheet" href="common.css">
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo-container">
+    <div class="logo">BookMy<span>Train</span>Ticket</div>
+    <span id="liveStatus" class="live-badge">● Online</span>
+  </a>
+  <nav id="navbarLinks" class="nav-links"></nav>
+</header>
+
+<main class="container">
+  <!-- Search Card -->
+  <section class="card">
+    <h1 class="card-title">Search Trains</h1>
+    <p class="card-subtitle">Search for express and superfast trains between stations.</p>
+    <div class="grid">
+      <div class="form-group">
+        <label for="fromStation">From Station</label>
+        <input id="fromStation" value="New Delhi" placeholder="Source station">
+      </div>
+      <div class="form-group">
+        <label for="toStation">To Station</label>
+        <input id="toStation" value="Mumbai Central" placeholder="Destination station">
+      </div>
+      <div class="form-group">
+        <label for="journeyDate">Journey Date</label>
+        <input id="journeyDate" type="date">
+      </div>
+    </div>
+    <br>
+    <button onclick="performSearch()">Search Trains</button>
+    <div id="searchMsg"></div>
+  </section>
+
+  <!-- Results Section -->
+  <section id="resultsSection" class="card" style="display:none;">
+    <h2 class="card-title">Available Trains</h2>
+    <div id="trainList"></div>
+  </section>
+
+  <!-- Seat Selection & Booking Section -->
+  <section id="bookingSection" class="card" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <h2 class="card-title" style="margin:0;">Passenger Details & Seat Selection</h2>
+      <button class="secondary" onclick="hideBooking()" style="font-size:12px;padding:6px 12px;">Back to Train List</button>
+    </div>
+    <div id="selectedTrainBanner" class="msg" style="margin:16px 0;"></div>
+
+    <div class="grid">
+      <div class="form-group">
+        <label for="passengerName">Passenger Full Name *</label>
+        <input id="passengerName" placeholder="Enter full name">
+      </div>
+      <div class="form-group">
+        <label for="passengerAge">Passenger Age *</label>
+        <input id="passengerAge" type="number" min="1" max="120" placeholder="e.g. 28">
+      </div>
+    </div>
+
+    <h3 style="margin-top:24px;margin-bottom:8px;color:#27a7ff;">Select Your Seat</h3>
+    <p style="color:#a9b7ca;font-size:13px;margin-top:0;">Green = Available, Blue = Selected, Dark = Booked</p>
+    <div id="seatsContainer" class="seat-grid"></div>
+
+    <div style="margin-top:24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <button onclick="openPayment()">Proceed to Payment</button>
+      <div id="bookingMsg"></div>
+    </div>
+  </section>
+</main>
+
+<!-- Payment Modal -->
+<div id="paymentModal" class="modal-backdrop hidden">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Complete Payment & Reserve Ticket</h3>
+      <button class="modal-close" onclick="closePayment()">×</button>
+    </div>
+
+    <div id="paymentSummary" class="modal-summary"></div>
+
+    <div class="grid">
+      <div class="form-group">
+        <label for="paymentMethod">Select Payment Method</label>
+        <select id="paymentMethod" onchange="togglePaymentInputs()">
+          <option value="UPI">UPI (Google Pay, PhonePe, Paytm)</option>
+          <option value="CREDIT_CARD">Credit Card</option>
+          <option value="DEBIT_CARD">Debit Card</option>
+          <option value="NET_BANKING">Net Banking</option>
+          <option value="WALLET">Digital Wallet</option>
+        </select>
+      </div>
+      <div id="upiGroup" class="form-group">
+        <label for="upiId">UPI ID</label>
+        <input id="upiId" placeholder="username@upi" value="user@okhdfcbank">
+      </div>
+    </div>
+
+    <div id="cardGroup" class="grid" style="display:none;margin-top:12px;">
+      <div class="form-group">
+        <label for="cardHolder">Cardholder Name</label>
+        <input id="cardHolder" placeholder="Name on card">
+      </div>
+      <div class="form-group">
+        <label for="cardNumber">Card Number</label>
+        <input id="cardNumber" placeholder="1234 5678 9012 3456">
+      </div>
+      <div class="form-group">
+        <label for="cardExpiry">Expiry Date</label>
+        <input id="cardExpiry" placeholder="MM/YY">
+      </div>
+      <div class="form-group">
+        <label for="cardCvv">CVV</label>
+        <input id="cardCvv" type="password" maxlength="4" placeholder="123">
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:24px;">
+      <button class="secondary" onclick="closePayment()">Cancel</button>
+      <button onclick="confirmBookingAndPayment()">Pay & Book Ticket</button>
+    </div>
+    <div id="paymentStatusMsg"></div>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="modal-backdrop hidden">
+  <div class="modal-card success-modal">
+    <div class="success-icon">✓</div>
+    <h3 style="color:#80f8be;font-size:24px;margin:0 0 12px;">Ticket Confirmed!</h3>
+    <p id="successDetails" style="color:#d4dde9;line-height:1.7;"></p>
+    <div style="display:flex;justify-content:center;gap:14px;margin-top:20px;">
+      <a href="bookings.html" class="btn">View in My Bookings</a>
+      <button class="secondary" onclick="closeSuccess()">Book Another Train</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  BookMyTrainTicket © 2026 • Train Reservation System
+</footer>
+
+<script src="common.js"></script>
+<script>
+  let selectedTrain = null;
+  let selectedSeat = null;
+
+  window.addEventListener('DOMContentLoaded', () => {
+    initNavbar('search');
+
+    // Default journey date to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('journeyDate').value = tomorrow.toISOString().split('T')[0];
+
+    // Check query params if redirected from home
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('from')) document.getElementById('fromStation').value = params.get('from');
+    if (params.get('to')) document.getElementById('toStation').value = params.get('to');
+
+    // Automatically trigger search
+    performSearch();
+  });
+
+  async function performSearch() {
+    const from = document.getElementById('fromStation').value.trim();
+    const to = document.getElementById('toStation').value.trim();
+    const resultsSec = document.getElementById('resultsSection');
+    const trainList = document.getElementById('trainList');
+    const msg = document.getElementById('searchMsg');
+
+    if (!from || !to) {
+      msg.innerHTML = '<div class="msg error">Please enter both departure and destination stations.</div>';
+      return;
+    }
+
+    msg.innerHTML = '<div class="msg">Searching available trains...</div>';
+    resultsSec.style.display = 'block';
+    trainList.innerHTML = '<p style="color:#a9b7ca;">Loading schedules...</p>';
+
+    try {
+      const trains = await api(`/api/trains/search?source=${encodeURIComponent(from)}&destination=${encodeURIComponent(to)}`);
+      msg.innerHTML = '';
+
+      if (!trains || trains.length === 0) {
+        trainList.innerHTML = '<div class="msg">No trains found for this route. Please try different stations.</div>';
+        return;
+      }
+
+      trainList.innerHTML = trains.map(t => {
+        const trainData = t.train || t;
+        const routeData = t.route || t;
+        const trainId = trainData.trainId || t.trainId;
+        const trainName = trainData.trainName || t.trainName || 'Express Train';
+        const trainNumber = trainData.trainNumber || t.trainNumber || '';
+        const src = routeData.sourceStation || t.sourceStation || from;
+        const dest = routeData.destinationStation || t.destinationStation || to;
+        const dep = routeData.departureTime || t.departureTime || '08:00';
+        const arr = routeData.arrivalTime || t.arrivalTime || '14:00';
+        const price = routeData.price || t.price || 850;
+        const seats = t.availableSeats !== undefined ? t.availableSeats : 12;
+
+        const rawJson = encodeURIComponent(JSON.stringify({
+          trainId, trainName, trainNumber, src, dest, dep, arr, price, seats
+        }));
+
+        return `
+          <div class="train-card">
+            <div>
+              <div class="train-title">${escapeHtml(trainName)} <span style="font-size:14px;color:#27a7ff;">#${escapeHtml(trainNumber)}</span></div>
+              <div class="train-meta">
+                <strong>${escapeHtml(src)}</strong> (${dep}) ➔ <strong>${escapeHtml(dest)}</strong> (${arr})<br>
+                Available Seats: <span style="color:#80f8be;font-weight:700;">${seats}</span>
+              </div>
+            </div>
+            <div class="train-price-box">
+              <div class="train-price">₹${price}</div>
+              <button onclick="selectTrain('${rawJson}')" style="margin-top:8px;">Select Seats</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (e) {
+      msg.innerHTML = `<div class="msg error">Search failed: ${e.message}</div>`;
+    }
+  }
+
+  async function selectTrain(encodedJson) {
+    selectedTrain = JSON.parse(decodeURIComponent(encodedJson));
+    selectedSeat = null;
+
+    const bookingSec = document.getElementById('bookingSection');
+    bookingSec.style.display = 'block';
+    bookingSec.scrollIntoView({ behavior: 'smooth' });
+
+    document.getElementById('selectedTrainBanner').innerHTML = `
+      <strong>${escapeHtml(selectedTrain.trainName)} (#${escapeHtml(selectedTrain.trainNumber)})</strong> |
+      ${escapeHtml(selectedTrain.src)} ➔ ${escapeHtml(selectedTrain.dest)} |
+      Fare: <strong style="color:#80f8be;">₹${selectedTrain.price}</strong>
+    `;
+
+    // Fill passenger name if user is logged in
+    const user = getUser();
+    if (user && user.username) {
+      document.getElementById('passengerName').value = user.username;
+    }
+
+    // Load Seats
+    const seatsContainer = document.getElementById('seatsContainer');
+    seatsContainer.innerHTML = '<span style="color:#a9b7ca;">Loading seats...</span>';
+
+    try {
+      const seats = await api(`/api/trains/${selectedTrain.trainId}/seats`);
+      seatsContainer.innerHTML = seats.map(s => {
+        const isAvail = s.available !== false;
+        return `
+          <div class="seat ${isAvail ? 'available' : 'unavailable'}"
+               onclick="${isAvail ? `chooseSeat(${s.seatId}, '${s.compartmentName}-${s.seatNumber}', this)` : ''}">
+            ${s.compartmentName}-${s.seatNumber}
+          </div>
+        `;
+      }).join('');
+    } catch (e) {
+      seatsContainer.innerHTML = '<div class="msg error">Failed to load seats.</div>';
+    }
+  }
+
+  function chooseSeat(seatId, seatLabel, element) {
+    document.querySelectorAll('.seat.selected').forEach(el => el.classList.remove('selected'));
+    element.classList.add('selected');
+    selectedSeat = { id: seatId, label: seatLabel };
+    document.getElementById('bookingMsg').innerHTML = `<span style="color:#80f8be;font-size:13px;font-weight:600;">Selected Seat: ${seatLabel}</span>`;
+  }
+
+  function hideBooking() {
+    document.getElementById('bookingSection').style.display = 'none';
+  }
+
+  function openPayment() {
+    const user = getUser();
+    if (!user) {
+      if (confirm('You must log in to reserve a train ticket. Would you like to go to the Login page now?')) {
+        window.location.href = 'login.html';
+      }
+      return;
+    }
+
+    const name = document.getElementById('passengerName').value.trim();
+    const age = document.getElementById('passengerAge').value.trim();
+
+    if (!name) {
+      alert('Please enter passenger full name.');
+      return;
+    }
+    if (!age || age <= 0) {
+      alert('Please enter a valid passenger age.');
+      return;
+    }
+    if (!selectedSeat) {
+      alert('Please click on an available seat to select it.');
+      return;
+    }
+
+    const summary = document.getElementById('paymentSummary');
+    summary.innerHTML = `
+      <div class="summary-line"><span>Train:</span><span>${escapeHtml(selectedTrain.trainName)} (#${escapeHtml(selectedTrain.trainNumber)})</span></div>
+      <div class="summary-line"><span>Route:</span><span>${escapeHtml(selectedTrain.src)} ➔ ${escapeHtml(selectedTrain.dest)}</span></div>
+      <div class="summary-line"><span>Passenger:</span><span>${escapeHtml(name)} (Age: ${age})</span></div>
+      <div class="summary-line"><span>Seat Selected:</span><span style="color:#80f8be;font-weight:700;">${selectedSeat.label}</span></div>
+      <div class="summary-line" style="border-top:1px solid #263952;padding-top:8px;font-size:16px;">
+        <span><strong>Total Amount:</strong></span><span style="color:#80f8be;"><strong>₹${selectedTrain.price}</strong></span>
+      </div>
+    `;
+
+    document.getElementById('paymentModal').classList.remove('hidden');
+    document.getElementById('paymentStatusMsg').innerHTML = '';
+  }
+
+  function closePayment() {
+    document.getElementById('paymentModal').classList.add('hidden');
+  }
+
+  function togglePaymentInputs() {
+    const method = document.getElementById('paymentMethod').value;
+    const upi = document.getElementById('upiGroup');
+    const card = document.getElementById('cardGroup');
+
+    if (method === 'UPI') {
+      upi.style.display = 'flex';
+      card.style.display = 'none';
+    } else if (method === 'CREDIT_CARD' || method === 'DEBIT_CARD') {
+      upi.style.display = 'none';
+      card.style.display = 'grid';
+    } else {
+      upi.style.display = 'none';
+      card.style.display = 'none';
+    }
+  }
+
+  async function confirmBookingAndPayment() {
+    const user = getUser();
+    const name = document.getElementById('passengerName').value.trim();
+    const age = parseInt(document.getElementById('passengerAge').value.trim(), 10);
+    const method = document.getElementById('paymentMethod').value;
+    const statusMsg = document.getElementById('paymentStatusMsg');
+
+    statusMsg.innerHTML = '<div class="msg">Processing reservation and payment...</div>';
+
+    const bookingPayload = {
+      userId: user.userId || 1,
+      seatId: selectedSeat.id,
+      trainId: selectedTrain.trainId,
+      routeId: 101,
+      passengerName: name,
+      passengerAge: age,
+      trainName: selectedTrain.trainName,
+      sourceStation: selectedTrain.src,
+      destinationStation: selectedTrain.dest
+    };
+
+    try {
+      const bookRes = await api('/api/bookings', {
+        method: 'POST',
+        body: JSON.stringify(bookingPayload)
+      });
+
+      if (!bookRes.success && bookRes.message && !bookRes.id) {
+        throw new Error(bookRes.message || 'Booking could not be created');
+      }
+
+      const bookingId = bookRes.id || Math.round(1000 + Math.random() * 9000);
+
+      // Process payment
+      const paymentRes = await api('/api/payments/process', {
+        method: 'POST',
+        body: JSON.stringify({
+          bookingId: bookingId,
+          amount: selectedTrain.price,
+          method: method
+        })
+      });
+
+      closePayment();
+
+      const txnId = paymentRes.transactionId || ('TXN-' + Date.now().toString().slice(-8));
+      document.getElementById('successDetails').innerHTML = `
+        Passenger: <strong>${escapeHtml(name)}</strong><br>
+        Train: <strong>${escapeHtml(selectedTrain.trainName)}</strong> (${escapeHtml(selectedTrain.src)} ➔ ${escapeHtml(selectedTrain.dest)})<br>
+        Seat: <strong style="color:#80f8be;">${selectedSeat.label}</strong><br>
+        Booking ID: <strong>#${bookingId}</strong><br>
+        Transaction ID: <strong>${txnId}</strong><br>
+        Amount Paid: <strong>₹${selectedTrain.price}</strong> (${method})
+      `;
+
+      document.getElementById('successModal').classList.remove('hidden');
+      hideBooking();
+    } catch (err) {
+      statusMsg.innerHTML = `<div class="msg error">Payment error: ${err.message}</div>`;
+    }
+  }
+
+  function closeSuccess() {
+    document.getElementById('successModal').classList.add('hidden');
+    performSearch();
+  }
+</script>
+</body>
+</html>

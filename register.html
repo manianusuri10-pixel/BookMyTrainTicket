@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookMyTrainTicket - Create Account</title>
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .auth-container {
+      max-width: 480px;
+      margin: 40px auto;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo-container">
+    <div class="logo">BookMy<span>Train</span>Ticket</div>
+    <span id="liveStatus" class="live-badge">● Online</span>
+  </a>
+  <nav id="navbarLinks" class="nav-links"></nav>
+</header>
+
+<main class="container">
+  <div class="auth-container">
+    <div class="card">
+      <h1 class="card-title">Create Account</h1>
+      <p class="card-subtitle">Register to book train tickets, reserve berths, and track your reservations.</p>
+
+      <form id="regForm" onsubmit="event.preventDefault(); handleRegister();">
+        <div class="form-group" style="margin-bottom:16px;">
+          <label for="regUsername">Choose Username *</label>
+          <input id="regUsername" required placeholder="Choose a username" autofocus>
+        </div>
+
+        <div class="form-group" style="margin-bottom:16px;">
+          <label for="regEmail">Email Address *</label>
+          <input id="regEmail" type="email" required placeholder="name@example.com">
+        </div>
+
+        <div class="form-group" style="margin-bottom:16px;">
+          <label for="regPassword">Password *</label>
+          <input id="regPassword" type="password" required placeholder="Choose a secure password">
+        </div>
+
+        <div class="form-group" style="margin-bottom:22px;">
+          <label for="regRole">Passenger Category / Quota</label>
+          <select id="regRole">
+            <option value="Regular">Regular Passenger (General)</option>
+            <option value="Senior">Senior Citizen (60+)</option>
+            <option value="DifferentlyAbled">Differently Abled (Divyangjan)</option>
+          </select>
+        </div>
+
+        <button type="submit" style="width:100%;font-size:16px;padding:12px;">Create Account</button>
+      </form>
+
+      <div id="regMsg"></div>
+
+      <div style="margin-top:24px;text-align:center;font-size:14px;color:#a9b7ca;border-top:1px solid #263952;padding-top:16px;">
+        Already registered? <a href="login.html" style="color:#27a7ff;font-weight:600;text-decoration:none;">Log in to your account</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  BookMyTrainTicket © 2026 • Train Reservation System
+</footer>
+
+<script src="common.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    initNavbar('register');
+  });
+
+  async function handleRegister() {
+    const username = document.getElementById('regUsername').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const role = document.getElementById('regRole').value;
+    const msg = document.getElementById('regMsg');
+
+    if (!username || !email || !password) {
+      msg.innerHTML = '<div class="msg error">Please fill in all required fields.</div>';
+      return;
+    }
+
+    msg.innerHTML = '<div class="msg">Creating your account...</div>';
+
+    try {
+      const res = await api('/api/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ username, email, password, role })
+      });
+
+      if (!res.success && res.message && !res.message.includes('success')) {
+        throw new Error(res.message || 'Registration failed.');
+      }
+
+      msg.innerHTML = '<div class="msg success">Account created successfully! Redirecting to login...</div>';
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1000);
+    } catch (err) {
+      msg.innerHTML = `<div class="msg error">${escapeHtml(err.message)}</div>`;
+    }
+  }
+</script>
+</body>
+</html>
